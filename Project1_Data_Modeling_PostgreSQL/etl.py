@@ -9,8 +9,8 @@ def process_song_file(cur, filepath):
     """
         This function read data from filepath to SQL database of table song_data and artist_data
         Parameters:
-            cur: The cursor to execute SQL command
-            filepath: a string contains the path to the file to be read
+            cur (psycopg2.cursor()): The cursor to execute SQL command
+            filepath(str): a string contains the path to the file to be read
     """
     # open song file
     
@@ -28,10 +28,12 @@ def process_song_file(cur, filepath):
 
     
     
-
 def process_log_file(cur, filepath):
     """
         This function read data from filepath to the SQL database of time table and user table and songplay table
+        Parameters:
+            cur (psycopg2.cursor()): The cursor to execute SQL command
+            filepath(str): the string of the filepath
     """
     # open log file
     df = pd.read_json(filepath, lines = True)
@@ -65,7 +67,6 @@ def process_log_file(cur, filepath):
     for index, row in df.iterrows():
         
         # get songid and artistid from song and artist tables
-        print("{} {} {}".format(row.song, row.artist, row.length))
         cur.execute(song_select, (row.song, row.artist, row.length))
         results = cur.fetchone()
         
@@ -76,11 +77,22 @@ def process_log_file(cur, filepath):
 
         # insert songplay record
         # we use index rather than songid found in the previous because the NULL value will cause an error
-        songplay_data = (index, pd.to_datetime(row.ts, unit='ms'), int(row.userId), artistid, row.sessionId, row.location, row.userAgent)
+        songplay_data = (pd.to_datetime(row.ts, unit='ms'), int(row.userId), artistid, row.sessionId, row.location, row.userAgent)
         cur.execute(songplay_table_insert, songplay_data)
 
 
 def process_data(cur, conn, filepath, func):
+    """
+        This function process data by a given function, either process_song_file or process_log_file
+        Parameters:
+            cur (psycopg2.cursors()): cursor to execute SQL commands
+            conn (psycopg2.connections()): connection to a database
+            filepath(str): string contains the path to files
+            func (function object): function to process data in filepath
+    
+    """
+    
+    
     # get all files matching extension from directory
     all_files = []
     for root, dirs, files in os.walk(filepath):
