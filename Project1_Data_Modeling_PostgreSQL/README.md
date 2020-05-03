@@ -14,20 +14,21 @@ The schema used in this project is Star schema with the fact table is the songpl
 
 ### Songplays
 ``` 
-songplay_id varchar PRIMARY KEY,  
-start_time timestamp,  
-user_id varchar,  
+songplay_id SERIAL,    
+start_time timestamp,    
+user_id varchar NOT NULL,  
 artist_id varchar,   
-session_id int,   
-location varchar,   
-user_agent varchar  
+session_id int,    
+location varchar,    
+user_agent varchar,   
+PRIMARY KEY(songplay_id)
 ```
 
 ### Users
 ```
 user_id int PRIMARY KEY,   
-first_name varchar,    
-last_name varchar,   
+first_name varchar NOT NULL,    
+last_name varchar NOT NULL,   
 gender varchar,   
 level varchar)
 ```
@@ -35,15 +36,15 @@ level varchar)
 ### Songs
 ```
 song_id varchar PRIMARY KEY,    
-title varchar,    
-artist_id varchar,   
+title varchar NOT NULL,    
+artist_id varchar NOT NULL,   
 year int,    
-duration numeric
+duration numeric NOT NULL
 ```
 ### Artists
 ```
 artist_id varchar PRIMARY KEY,   
-name varchar,    
+name varchar NOT NULL,    
 location varchar,    
 latitude varchar,    
 longitude varchar
@@ -71,9 +72,9 @@ The project files are organized as follows:
 
 ## How to run
 
-1. Initialize tables by `create_tables.py`
+1. Initialize tables by `python3 create_tables.py`
 
-2. Stream data to the database by `etl.py`
+2. Stream data to the database by `python3 etl.py`
 
 
 
